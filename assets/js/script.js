@@ -154,7 +154,7 @@ function loadGraph() {
             ]);
 
             var optionsTimelyResponse = {
-                title: 'Timely Response Stats (Latest  10000 cases)',
+                title: ' Response Stats (Latest  10000 cases)',
                 is3D: true
             };
             var chartTimelyResponse = new google.visualization.PieChart(document.getElementById('piechartTimelyResponse'));
