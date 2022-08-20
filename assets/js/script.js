@@ -84,13 +84,10 @@ function loadQueryTable() {
 }
 
 function loadGraph() {
-    var closeEx = 0;
-    var inPro = 0;
-    var closeOut = 0;
-    var untimely = 0;
-    var closed = 0;
-    var closeMo = 0;
-    var closeNonMo = 0;
+    var Contract = 0;
+    var Freelance = 0;
+    var Full_time = 0;
+    var Part_time = 0;
     var other = 0;
 
     var Web = 0;
@@ -107,27 +104,18 @@ function loadGraph() {
         if (this.readyState == 4 && this.status == 200) {
             const objects = JSON.parse(this.responseText);
             for (let object of objects) {
-                switch (object['Company response to consumer']) {
-                    case "Closed with explanation":
-                        closeEx = closeEx + 1;
+                switch (object['employment_type']) {
+                    case "Contract":
+                        Contract = Contract + 1;
                         break;
-                    case "In progress":
-                        inPro = inPro + 1;
+                    case "Freelance":
+                        Freelance = Freelance + 1;
                         break;
-                    case "Closed without relief":
-                        closeOut = closeOut + 1;
+                    case "Full-time":
+                        Full_time = Full_time + 1;
                         break;
-                    case "Untimely response":
-                        untimely = untimely + 1;
-                        break;
-                    case "Closed":
-                        closed = closed + 1;
-                        break;
-                    case "Closed with monetary relief":
-                        closeMo = closeMo + 1;
-                        break;
-                    case "Closed with non-monetary relief":
-                        closeNonMo = closeNonMo + 1;
+                    case "Part-time":
+                        Part_time = Part_time + 1;
                         break;
                     default:
                         other = other + 1;
@@ -157,18 +145,18 @@ function loadGraph() {
             }
 
             var TimelyResponseData = google.visualization.arrayToDataTable([
-                ['Company response to consumer', 'Case'],
-                ['In progress', inPro],
-                ['Closed', closed],
-                ['Closed without relief', closeOut],
-                ['Closed with explanation', closeEx],
-                ['Closed with monetary relief', closeMo],
-                ['Closed with non-monetary relief', closeNonMo],
-                ['Untimely response', untimely],
+                ['', ''],
+                ['Contract', Contract],
+                ['Freelance', Freelance],
+                ['Full-time', Full_time],
+                ['Part-time', Part_time],
                 ['Other', other]
             ]);
 
-            var optionsTimelyResponse = { title: 'Timely Response Stats (Latest  10000 cases)' };
+            var optionsTimelyResponse = {
+                title: 'Timely Response Stats (Latest  10000 cases)',
+                is3D: true
+            };
             var chartTimelyResponse = new google.visualization.PieChart(document.getElementById('piechartTimelyResponse'));
             chartTimelyResponse.draw(TimelyResponseData, optionsTimelyResponse);
 
