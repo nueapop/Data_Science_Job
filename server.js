@@ -24,6 +24,30 @@ app.get('/', (req, res) => {
     res.send(`Hello World! Let\'s Working with NoSQL Databases.`);
 });
 
+// Get a data from collection to show in the graph summary
+app.get('/salaries/graphsum', async (req, res) => {
+    const client = new MongoClient(uri);
+    await client.connect();
+    const pipeline = [
+        { $group: { _id: "$job_title", avg_val: { $avg: "$salary_in_usd" }, sum_val: { $sum: 1 } } }
+    ];
+    const objects = await client.db('miniproject').collection('salaries').aggregate(pipeline).sort({ 'sum_val': -1 }).toArray();
+    await client.close();
+    res.status(200).send(objects);
+});
+
+// Get a data from collection to show in the graph average
+app.get('/salaries/graphavg', async (req, res) => {
+    const client = new MongoClient(uri);
+    await client.connect();
+    const pipeline = [
+        { $group: { _id: "$job_title", avg_val: { $avg: "$salary_in_usd" }, sum_val: { $sum: 1 } } }
+    ];
+    const objects = await client.db('miniproject').collection('salaries').aggregate(pipeline).sort({ 'avg_val': -1 }).toArray();
+    await client.close();
+    res.status(200).send(objects);
+});
+
 // Get all data from collection
 app.get('/salaries', async (req, res) => {
     const client = new MongoClient(uri);
@@ -56,7 +80,7 @@ app.get('/salaries/job_title/:searchText', async (req, res) => {
         $text: {
             $search: searchText
         }
-    }).sort({ "work_year": -1 }).toArray();
+    }).sort({ "work_year": -1 }).limit(100).toArray();
     await client.close();
     res.status(200).send({
         'status': 200,
