@@ -269,26 +269,38 @@ function compliantCreate() {
 }
 
 function compliantDelete(id) {
-    const xhttp = new XMLHttpRequest();
-    xhttp.open("DELETE", "http://localhost:3000/salaries/delete");
-    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xhttp.send(JSON.stringify({
-        "_id": id
-    }));
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4) {
-            const objects = JSON.parse(this.responseText);
-            Swal.fire(
-                'ขอบคุณ!',
-                'ลบข้อมูลเรียบร้อยแล้ว',
-                'warning'
-            );
+    Swal.fire({
+        title: 'คุณต้องการลบข้อมูลของคุณหรือไม่',
+        icon: 'error',
+        showDenyButton: true,
+        confirmButtonText: 'ลบข้อมูล',
+        denyButtonText: 'ไม่ลบข้อมูล',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("DELETE", "http://localhost:3000/salaries/delete");
+            xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhttp.send(JSON.stringify({
+                "_id": id
+            }));
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    const objects = JSON.parse(this.responseText);
+                    Swal.fire('ลบข้อมูลเรียบร้อยแล้ว!', '', 'success')
+                    loadTable();
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 3000);
+                }
+            };
+        } else if (result.isDenied) {
+            Swal.fire('ข้อมูลยังไม่ถูกลบ', '', 'info')
             loadTable();
             setTimeout(function () {
                 window.location.reload();
             }, 3000);
         }
-    };
+    })
 }
 
 function showCompliantEditBox(id) {
